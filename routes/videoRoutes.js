@@ -12,7 +12,7 @@ const storage = multer.diskStorage({
         cb(null, Date.now() + '-' + file.originalname);
     }
 });
-const upload = multer({ storage: storage });
+const upload = multer({ storage });
 
 // POST /videos/upload - Upload a video file to Cloudinary
 router.post('/upload', upload.single('video'), async (req, res) => {
@@ -25,7 +25,7 @@ router.post('/upload', upload.single('video'), async (req, res) => {
     }
 });
 
-// POST /videos/trim - Trim a video file and upload to Cloudinary
+// POST /videos/trim - Trim a video file and upload trimmed version to Cloudinary
 router.post('/trim', upload.single('video'), async (req, res) => {
     const { trimStart, trimDuration } = req.body;
 
@@ -38,14 +38,13 @@ router.post('/trim', upload.single('video'), async (req, res) => {
     }
 });
 
-// POST /videos/merge - Merge two video files and upload to Cloudinary
+// POST /videos/merge - Merge two video files and upload merged version to Cloudinary
 router.post('/merge', upload.fields([{ name: 'video1', maxCount: 1 }, { name: 'video2', maxCount: 1 }]), async (req, res) => {
-    const { prePath } = req.body;
     const inputFile1 = req.files['video1'][0];
     const inputFile2 = req.files['video2'][0];
 
     try {
-        const cloudinaryUrl = await mergeVideos(prePath, inputFile1.path, inputFile2.path);
+        const cloudinaryUrl = await mergeVideos('prePath', inputFile1.path, inputFile2.path);
         res.status(200).json({ message: 'Videos merged and uploaded to Cloudinary successfully.', cloudinaryUrl });
     } catch (error) {
         console.error('Error merging and uploading videos to Cloudinary:', error);
