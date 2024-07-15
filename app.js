@@ -1,3 +1,5 @@
+require('dotenv').config();
+
 const express = require('express');
 const bodyParser = require('body-parser');
 const videoRoutes = require('./routes/videoRoutes');
@@ -7,9 +9,6 @@ const User = require('./models/userModel'); // Import User model
 
 const app = express();
 const port = process.env.PORT || 3000;
-
-// Load environment variables from .env file
-require('dotenv').config();
 
 app.use(bodyParser.json());
 
